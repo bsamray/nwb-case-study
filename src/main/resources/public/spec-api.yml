@@ -1,0 +1,97 @@
+swagger: "2.0"
+info:
+  description: This is a project to transfer between accounts
+  version: 1.0.0
+  title: Transfer service
+basePath: /v1
+schemes:
+  - http
+paths:
+  /accounts/{accountId}:
+    get:
+      summary: Find an account
+      description: Returns an account
+      operationId: getAccount
+      produces:
+        - application/json
+      parameters:
+        - name: accountId
+          in: path
+          description: ID of account
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Account"
+        "400":
+          description: Invalid account ID supplied
+        "404":
+          description: Account not found
+    post:
+      summary: Transfer funds between accounts
+      description: Transfer funds between accounts
+      operationId: createAccount
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Account details for creation
+          required: true
+          schema:
+            $ref: "#/definitions/Account"
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Bad input provided
+  /transactions:
+    post:
+      summary: Transfer funds between accounts
+      description: Transfer funds between accounts
+      operationId: transferFunds
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Details for fund transfer
+          required: true
+          schema:
+            $ref: "#/definitions/TransferRequest"
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Bad input provided, e.g. Insufficient funds
+        404:
+          description: Account not found
+
+definitions:
+  Account:
+    type: object
+    properties:
+      account:
+        type: string
+        description: Source account
+      amount:
+        type: number
+        description: Initial balance
+  TransferRequest:
+    type: object
+    properties:
+      from_account:
+        type: string
+        description: Source account
+      to_account:
+        type: string
+        description: Destination account
+      amount:
+        type: number
+        description: Amount to transfer
