@@ -7,6 +7,7 @@ import uk.co.nwb.tech.nwb.model.Account;
 import uk.co.nwb.tech.nwb.model.Transaction;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 @Service
 public class TransactionService implements TransactionServiceInterface {
@@ -16,21 +17,23 @@ public class TransactionService implements TransactionServiceInterface {
 
     @Override
     public void transferFunds(Transaction transaction) {
-        Double transferAmt = transaction.getAmount();
+        BigDecimal transferAmt = BigDecimal.valueOf(transaction.getAmount());
         String fromAcc = transaction.getFromAccount();
         String toAcc = transaction.getToAccount();
 
-        Double fromAccountBal = dataStore.getAccount(fromAcc).getAmount();
-        Double toAccountBal = dataStore.getAccount(toAcc).getAmount();
+        BigDecimal fromAccountBal = BigDecimal.valueOf(dataStore.getAccount(fromAcc).getAmount());
+        BigDecimal toAccountBal = BigDecimal.valueOf(dataStore.getAccount(toAcc).getAmount());
 
         validateTransfer(fromAccountBal, transferAmt);
 
-        dataStore.upsert(Account.builder().account(fromAcc).amount(fromAccountBal - transferAmt).build());
-        dataStore.upsert(Account.builder().account(toAcc).amount(toAccountBal + transferAmt).build());
+        dataStore.upsert(Account.builder().account(fromAcc)
+                .amount((fromAccountBal.subtract(transferAmt)).doubleValue()).build());
+        dataStore.upsert(Account.builder().account(toAcc)
+                .amount((toAccountBal.add(transferAmt)).doubleValue()).build());
     }
 
-    private void validateTransfer(Double bal, Double transferAmt) {
-        if (bal < transferAmt) {
+    private void validateTransfer(BigDecimal bal, BigDecimal transferAmt) {
+        if (bal.compareTo(transferAmt) < 0) {
             throw new InsufficientFundsException("Insufficient funds for transfer");
         }
     }

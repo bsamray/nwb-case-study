@@ -7,10 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.co.nwb.tech.nwb.exception.BankAccountNotFoundException;
 import uk.co.nwb.tech.nwb.exception.DuplicateAccountException;
 import uk.co.nwb.tech.nwb.model.Account;
-import uk.co.nwb.tech.nwb.model.Transaction;
 import uk.co.nwb.tech.nwb.service.AccountServiceInterface;
 
 import static org.mockito.ArgumentMatchers.any;
